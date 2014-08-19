@@ -31,6 +31,14 @@ module Omnibus
       it 'exposes :parameters' do
         expect(subject).to have_exposed_method(:parameters)
       end
+
+      it 'exposes :wix_candle_extensions' do
+        expect(subject).to have_exposed_method(:wix_candle_extensions)
+      end
+
+      it 'exposes :wix_light_extensions' do
+        expect(subject).to have_exposed_method(:wix_light_extensions)
+      end
     end
 
     describe '#id' do
@@ -197,6 +205,70 @@ module Omnibus
         it 'returns the right value' do
           expect(subject.msi_display_version).to eq('1.2.3')
         end
+      end
+    end
+
+    describe '#wix_candle_extensions' do
+      it 'is a DSL method' do
+        expect(subject).to have_exposed_method(:wix_candle_extensions)
+      end
+
+      it 'is defaults to an empty Array' do
+        expect(subject.wix_candle_extensions).to be_a(Array)
+        expect(subject.wix_candle_extensions).to be_empty
+      end
+
+      it 'requires the value to be an Array' do
+        expect {
+          subject.wix_candle_extensions(Object.new)
+        }.to raise_error(InvalidValue)
+      end
+
+      it 'returns the given value' do
+        extensions = ['a']
+        subject.wix_candle_extensions(extensions)
+        expect(subject.wix_candle_extensions).to match_array(extensions)
+      end
+    end
+
+    describe '#wix_light_extensions' do
+      it 'is a DSL method' do
+        expect(subject).to have_exposed_method(:wix_light_extensions)
+      end
+
+      it 'is defaults to an empty Array' do
+        expect(subject.wix_light_extensions).to be_a(Array)
+        expect(subject.wix_light_extensions).to be_empty
+      end
+
+      it 'requires the value to be an Array' do
+        expect {
+          subject.wix_light_extensions(Object.new)
+        }.to raise_error(InvalidValue)
+      end
+
+      it 'returns the given value' do
+        extensions = ['a']
+        subject.wix_light_extensions(extensions)
+        expect(subject.wix_light_extensions).to match_array(extensions)
+      end
+    end
+
+    describe '#wix_extension_switches' do
+      it 'returns an empty string for an empty array' do
+        expect(subject.wix_extension_switches([])).to eq('')
+      end
+
+      it 'returns the correct value for one extension' do
+        expect(subject.wix_extension_switches(['a'])).to eq("-ext 'a'")
+      end
+
+      it 'returns the correct value for many extensions' do
+        expect(subject.wix_extension_switches(['a', 'b'])).to eq("-ext 'a' -ext 'b'")
+      end
+
+      it 'uses the correct delimiter' do
+        expect(subject.wix_extension_switches(['a', 'b'], 'D')).to eq("-ext 'a'D-ext 'b'")
       end
     end
   end
